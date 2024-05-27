@@ -57,7 +57,7 @@ Game::Game(int argc, char *argv[], std::string const& title, vec2 const& screenS
     renderer.uploadProjectionMat(projMat);
 
     //Camera & Mouse
-    glutPassiveMotionFunc(mouse)
+    glutPassiveMotionFunc(mouse);
     glutHideCursor();
     player.setProgram(program);
 
@@ -110,7 +110,7 @@ Game::Game(int argc, char *argv[], std::string const& title, vec2 const& screenS
     wheel->setSpecialLightBool(false);
 	bus.addChild(wheel);
     objects.push_back(&bus);
-    player.setObjectToFollow(objects.at(1));  // COMMENTATE FOR FREE CAMERA
+    //player.setObjectToFollow(objects.at(1));
 
     objects.push_back(terr);
 

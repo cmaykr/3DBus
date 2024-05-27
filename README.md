@@ -1,4 +1,4 @@
-Personal continuation of project in computer graphics course.
+Personal continuation of a project from a computer graphics course.
 
 -----
 ## Compiling and running

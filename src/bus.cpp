@@ -26,7 +26,6 @@ void Bus::uploadSpecificUniforms(GLuint prog) const
     // TODO: Fix to not use constants
     uploadUniformFloatToShader(prog, "outerCosineLimit", 12.0f);
     uploadUniformFloatToShader(prog, "innerCosineLimit", 0.0f);
-    uploadUniformFloatToShader(prog, "maxLightDist", 100.0f);
 
     Object::uploadSpecificUniforms(prog);
 }

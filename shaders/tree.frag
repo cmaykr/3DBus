@@ -13,7 +13,6 @@ uniform vec3 light2Pos;
 uniform vec3 light2Dir;
 uniform float outerCosineLimit;
 uniform float innerCosineLimit;
-uniform float maxLightDist;
 float a = 5;
 float b = 0.1;
 float c = 0.04;
@@ -43,21 +42,20 @@ void main(void)
 
 	vec3 vecToPoint = light1Pos - position;
 	float distance = length(vecToPoint);
-	if (distance < maxLightDist && shouldSpotlight)
-	{
-		float theta = dot(light1Dir, normalize(-vecToPoint));
-		float epsilon = (cos(radians(innerCosineLimit)) - cos(radians(outerCosineLimit)));
-		float intens1 = clamp((theta - cos(radians(outerCosineLimit))) / epsilon, 0.0, 1.0);
+	float theta = dot(light1Dir, normalize(-vecToPoint));
+	float epsilon = (cos(radians(innerCosineLimit)) - cos(radians(outerCosineLimit)));
+	float intens1 = clamp((theta - cos(radians(outerCosineLimit))) / epsilon, 0.0, 1.0);
+	theta = distance;
+	float intens1dir = clamp((-theta +100) / 100, 0.0, 1.0);
+	
+	vecToPoint = light2Pos - position;
+	distance = length(vecToPoint);
 
-		vecToPoint = light2Pos - position;
-		distance = length(vecToPoint);
+	theta = dot(light2Dir, normalize(-vecToPoint));
+	float intens2 = clamp((theta - cos(radians(outerCosineLimit))) / epsilon, 0.0, 1.0);
+	theta = distance;
+	float intens2dir = clamp((-theta +100) / 100, 0.0, 1.0);
 
-		theta = dot(light2Dir, normalize(-vecToPoint));
-		float intens2 = clamp((theta - cos(radians(outerCosineLimit))) / epsilon, 0.0, 1.0);
-
-		out_Color = texture(texUnit, outTexCoord) * (intens1 + intens2) + ambient;
-	}
-	else
-		out_Color = ambient;
+	out_Color = texture(texUnit, outTexCoord) * (clamp(intens1 + intens2,0.0, 1.0))*(clamp(intens1dir+intens2dir, 0.0, 1.0)) + ambient;
 
 }

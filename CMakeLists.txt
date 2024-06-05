@@ -10,7 +10,7 @@ set(CMAKE_CXX_FLAGS "-DGL_GLEXT_PROTOTYPES -lXt -lX11 -lGL -lm -lstdc++ -Wall")
 
 set(SRC_COMMON common/Linux/MicroGlut.c common/GL_utilities.c common/LoadTGA.c)
 
-set(SRC_GAME src/main.cpp src/game.cpp src/object.cpp src/renderer.cpp src/player.cpp src/bus.cpp src/road.cpp src/terrain.cpp)
+set(SRC_GAME src/main.cpp src/game.cpp src/object.cpp src/renderer.cpp src/player.cpp src/bus.cpp src/road.cpp src/terrain.cpp src/assetmanager.cpp)
 
 include_directories(include)
 include_directories(common)

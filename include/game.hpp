@@ -10,6 +10,7 @@
 #include "renderer.hpp"
 #include "player.hpp"
 #include "bus.hpp"
+#include "assetmanager.hpp"
 
 class Game
 {
@@ -29,7 +30,8 @@ private:
 
     Renderer renderer;
     Player player;
-    Bus bus;
+    Bus bus; // Why?
+    AssetManager assetManager;
 
 
     double deltaTime{};

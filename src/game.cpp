@@ -40,7 +40,7 @@ void gameLoop()
 }
 
 Game::Game(int argc, char *argv[], std::string const& title, vec2 const& screenSize, int FPS)
-    : program(), objects(), renderer(objects), player(30, &renderer), bus()
+    : program(), objects(), renderer(objects), player(30, &renderer), bus(), assetManager("textures/", "models/")
 {
     game = this;
     glutInit(&argc, argv);
@@ -63,43 +63,33 @@ Game::Game(int argc, char *argv[], std::string const& title, vec2 const& screenS
 
     // For testing
     Model *mdl = LoadModel("models/bus.obj");
-    GLuint tex, tex2, tex3, tex4, texSkybox;
-    GLuint tex5, tex6;
-    LoadTGATextureSimple("textures/grass.tga", &tex);
-    LoadTGATextureSimple("textures/water-texture-2.tga", &tex6);
-    LoadTGATextureSimple("textures/terrainSplat.tga", &tex5);
-    //glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, tex);
-	LoadTGATextureSimple("textures/BusTexture.tga", &tex2);
-    LoadTGATextureSimple("textures/conc.tga", &tex3);
-    //glBindTexture(GL_TEXTURE_3D, tex2);
-    std::cout << "Tex int: " << tex5 << std::endl;
+    assetManager.LoadTGATexture("grass.tga");
+    assetManager.LoadTGATexture("water-texture-2.tga");
+    assetManager.LoadTGATexture("terrainSplat.tga");
+    assetManager.LoadTGATexture("BusTexture.tga");
+    assetManager.LoadTGATexture("conc.tga");
+    assetManager.LoadTGATexture("bush.tga");
+    assetManager.LoadTGATexture("atmosphere-cloud.tga");
     printError("init shader");
     LoadTGATextureData("textures/fft-terrain.tga", &ttex);
-    Terrain* terr = new Terrain{&ttex, program, tex};
-    terr->setSplatmap(tex5, tex6);
-    Road* road = new Road{"models/road.txt", 3, terr, treeShader, tex3};
+    Terrain* terr = new Terrain{&ttex, program, assetManager.getTexture("grass.tga")};
+    terr->setSplatmap(assetManager.getTexture("terrainSplat.tga"), assetManager.getTexture("water-texture-2.tga"));
+    Road* road = new Road{"models/road.txt", 3, terr, treeShader, assetManager.getTexture("conc.tga")};
 
     // Skybox init
 	Model *skyboxMdl = LoadModel("models/skybox-full-tweaked.obj");
-    LoadTGATextureSimple("textures/atmosphere-cloud.tga", &texSkybox);
-	/* glActiveTexture(GL_TEXTURE6);
-	LoadTGATextureSimple("labskybox512.tga", &texSkybox);
-	glActiveTexture(GL_TEXTURE6);
-	glBindTexture(GL_TEXTURE_2D, texSkybox); */
 	
 	//Skybox
-    Object* skybox = new Object{skyboxMdl, program, texSkybox};
+    Object* skybox = new Object{skyboxMdl, program, assetManager.getTexture("atmosphere-cloud.tga")};
     objects.push_back(skybox);
     objects.at(objects.size()-1)->setDepthTest(false);
     skybox->setRotation(vec3(0, 1.5708, 0));
     skybox->setSpecialLightBool(false);
 
 
-    bus = Bus{mdl, treeShader, tex2, vec3(0.2, 0.2, 2), 30, 0.95, 2.3, terr, road};
+    bus = Bus{mdl, treeShader, assetManager.getTexture("BusTexture.tga"), vec3(0.2, 0.2, 2), 30, 0.95, 2.3, terr, road};
     bus.setScale(vec3(0.1));
     bus.setPosition(vec3(10.2,4.5,10));
-    //bus.setRotation(vec3(1, 0, 0));
 
 	Model *wheelmdl = LoadModel("models/BusWheel.obj");
 	Object* wheel = new Object{wheelmdl, program, 3, &bus};
@@ -116,12 +106,11 @@ Game::Game(int argc, char *argv[], std::string const& title, vec2 const& screenS
 
 	objects.push_back(road);
 
-    LoadTGATextureSimple("textures/bush.tga", &tex4);
     std::vector<Model*> foliageMdls{};
     foliageMdls.push_back(LoadModel("models/bush.obj"));
     foliageMdls.push_back(LoadModel("models/tree02.obj"));
 
-    objects.push_back(new Object(foliageMdls.at(1), treeShader, tex4));
+    objects.push_back(new Object(foliageMdls.at(1), treeShader, assetManager.getTexture("bush.tga")));
     objects.at(objects.size()-1)->setPosition(vec3(10, 1, 40));
     objects.at(objects.size()-1)->setAB(treeA, treeB);
     objects.at(1)->setAB(BusA, BusB);
@@ -152,20 +141,20 @@ Game::Game(int argc, char *argv[], std::string const& title, vec2 const& screenS
                     z1 = dis2(gen);
                 }
 
-                objects.push_back(new Object(foliageMdls.at(1), treeShader, tex4));
+                objects.push_back(new Object(foliageMdls.at(1), treeShader, assetManager.getTexture("bush.tga")));
                 objects.at(objects.size()-1)->setPosition(vec3(x1, terr->calculatePointHeight(x1,z1), z1));
                 objects.at(objects.size()-1)->setAB(treeA, treeB); //AABB
             }
         }
         else if (i % 2 == 0)
         {
-            objects.push_back(new Object(foliageMdls.at(1), treeShader, tex4));
+            objects.push_back(new Object(foliageMdls.at(1), treeShader, assetManager.getTexture("bush.tga")));
             objects.at(objects.size()-1)->setPosition(vec3(x, terr->calculatePointHeight(x,z), z));
             objects.at(objects.size()-1)->setAB(treeA, treeB); //AABB
         }
         else
         {
-            objects.push_back(new Object(foliageMdls.at(0), treeShader, tex4));
+            objects.push_back(new Object(foliageMdls.at(0), treeShader, assetManager.getTexture("bush.tga")));
             objects.at(objects.size()-1)->setPosition(vec3(x, terr->calculatePointHeight(x,z), z));
         }
     }

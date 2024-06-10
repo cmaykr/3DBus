@@ -1,5 +1,7 @@
 Personal continuation of a project from a computer graphics course.
 
+https://trello.com/b/guIKUioA/3dbus-game 
+
 -----
 ## Compiling and running
 * Create a directory named build.
